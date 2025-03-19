@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url('https://iili.io/3nAvSyu.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .game-container {
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #ff6f61;
+    }
+
+    #balloons-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .balloon {
+      width: 60px;
+      height: 80px;
+      background-color: #ff6f61;
+      border-radius: 50%;
+      position: relative;
+      cursor: pointer;
+      animation: float 3s infinite ease-in-out;
+    }
+
+    .balloon::before {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 25px;
+      width: 10px;
+      height: 20px;
+      background-color: #ff6f61;
+      clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    #message {
+      font-size: 24px;
+      color: #4caf50;
+      font-weight: bold;
+      margin-top: 20px;
+      opacity: 0; /* Start hidden */
+      transform: scale(0); /* Start small */
+      transition: opacity 1s ease, transform 1s ease; /* Smooth transition */
+    }
+
+    #message.show {
+      opacity: 1; /* Fully visible */
+      transform: scale(1); /* Scale to normal size */
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #ff6f61;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #ff4a3d;
+    }
+
+    #restart-button {
+      display: none; /* Hidden by default */
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>Pop the Balloons!</h1>
+    <p>Time Left: <span id="timer">30</span> seconds</p>
+    <div id="balloons-container"></div>
+    <p id="message"></p>
+    <button id="start-button">Start Game</button>
+    <button id="restart-button">Restart Game</button>
+  </div>
+
+  <script>
+    const balloonsContainer = document.getElementById("balloons-container");
+    const timerDisplay = document.getElementById("timer");
+    const messageDisplay = document.getElementById("message");
+    const startButton = document.getElementById("start-button");
+    const restartButton = document.getElementById("restart-button");
+
+    let timeLeft = 30;
+    let balloonCount = 10;
+    let timer;
+
+    // Function to create balloons
+    function createBalloons() {
+      balloonsContainer.innerHTML = ""; // Clear existing balloons
+      for (let i = 0; i < balloonCount; i++) {
+        const balloon = document.createElement("div");
+        balloon.classList.add("balloon");
+        balloon.addEventListener("click", () => popBalloon(balloon));
+        balloonsContainer.appendChild(balloon);
+      }
+    }
+
+    // Function to pop a balloon
+    function popBalloon(balloon) {
+      balloon.style.display = "none";
+      balloonCount--;
+      if (balloonCount === 0) {
+        clearInterval(timer);
+        messageDisplay.textContent = "Happy Birthday! 🎉";
+        messageDisplay.classList.add("show");
+        restartButton.style.display = "block"; // Show restart button
+      }
+    }
+
+    // Function to start the timer
+    function startTimer() {
+      timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = timeLeft;
+        if (timeLeft === 0) {
+          clearInterval(timer);
+          messageDisplay.textContent = "Time's up! Try again!";
+          messageDisplay.classList.add("show");
+          restartButton.style.display = "block"; // Show restart button
+        }
+      }, 1000);
+    }
+
+    // Function to reset the game
+    function resetGame() {
+      timeLeft = 30;
+      balloonCount = 10;
+      timerDisplay.textContent = timeLeft;
+      messageDisplay.textContent = "";
+      messageDisplay.classList.remove("show");
+      restartButton.style.display = "none"; // Hide restart button
+      createBalloons();
+    }
+
+    // Start button click event
+    startButton.addEventListener("click", () => {
+      resetGame();
+      startTimer();
+      startButton.style.display = "none"; // Hide start button
+    });
+
+    // Restart button click event
+    restartButton.addEventListener("click", () => {
+      resetGame();
+      startTimer();
+      restartButton.style.display = "none"; // Hide restart button
+    });
+
+    // Initialize the game with balloons but don't start the timer yet
+    createBalloons();
+  </script>
+</body>
+</html>
